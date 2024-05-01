@@ -1,0 +1,65 @@
+---
+
+- name: Update packages on all servers
+  hosts: all
+  become: true
+  remote_user: "{{ remote_login_username }}"
+  pre_tasks:
+    - name: Install updates (Ubuntu)
+      tags: always
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+    - name: Install updates (RHEL)
+      tags: always
+      dnf:
+        update_only: yes
+        update_cache: yes
+      when: ansible_distribution == "RedHat"
+
+
+- name: Install Apache WebServer and PHP packages on the web servers
+  hosts: web_servers
+  become: true
+  remote_user: "{{ remote_login_username }}"
+  tasks:
+  - name: Install apache and php for Ubuntu servers
+    tags: ubuntu,apache,apache2
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Install apache and php for RHEL servers
+    tags: rhel,apache,httpd
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+
+- name: Install mariadb package on the DB servers
+  hosts: db_servers
+  become: true
+  remote_user: "{{ remote_login_username }}"
+  tasks:
+    - name: Install mariadb package for Ubuntu servers
+      tags: ubuntu,db,mariadb-server
+      apt:
+        name: mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: Install mariadb package for RHEL servers
+      tags: rhel,db,mariadb
+      dnf:
+        name: mariadb
+        state: latest
+      when: ansible_distribution == "RedHat"
+
