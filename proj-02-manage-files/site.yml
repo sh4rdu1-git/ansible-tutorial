@@ -19,6 +19,24 @@
       when: ansible_distribution == "RedHat"
 
 
+- name: Setup workstations with necessary packages
+  hosts: workstations
+  become: true
+  remote_user: "{{ remote_login_username }}"
+  tasks:
+  - name: Install unzip package
+    package:
+      name: unzip
+      state: latest
+  - name: Download and unarchive the terraform binary
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.8.2/terraform_1.8.2_linux_amd64.zip
+      dest: /usr/local/bin/
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
 - name: Install Apache WebServer and PHP packages on the web servers
   hosts: web_servers
   become: true

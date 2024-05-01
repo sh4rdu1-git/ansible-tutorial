@@ -11,3 +11,7 @@
 # Pass any variables required; like for different remote_user for a server
 
 
+[workstations]
+# List down the workstation machines in your inventory (One's from which main tasks will be performed)
+# Machines such as the control nodes of Ansible
+# Pass any variables required
