@@ -70,6 +70,22 @@
       enabled: yes
     when: ansible_distribution == "RedHat"
 
+  - name: Change the email for admin (RHEL)
+    tags: rhel,apache,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: 'ServerAdmin somebody@somewhere.net'
+    when: ansible_distribution == "RedHat"
+    register: httpd_conf_email
+
+  - name: Restart httpd service post conf file edit (RHEL)
+    tags: rhel,apache,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd_conf_email.changed
+
   - name: Copy default site HTML to web servers
     tags: apache,apache2,httpd
     copy:
