@@ -1,0 +1,17 @@
+# This file contains the list of all servers in your inventory. For security reasons, I have not included my server IPs in this.
+
+[webservers]
+# List down the web servers in your inventory
+# Pass any variables required; like for different remote_user for a server
+
+
+
+[db_servers]
+# List down the database servers in your inventory
+# Pass any variables required; like for different remote_user for a server
+
+
+[workstations]
+# List down the workstation machines in your inventory (One's from which main tasks will be performed)
+# Machines such as the control nodes of Ansible
+# Pass any variables required
