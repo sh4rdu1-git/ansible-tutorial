@@ -1,0 +1,27 @@
+all:
+  vars:
+    host_groups:
+      WEB: HG_WEB
+      APP: HG_APP
+      DB: HG_DB
+    monitoring_modes:
+      fullstack: fullstack
+      infraOnly: infra-only
+      discovery: discovery
+
+  children:
+    webServers:
+      hosts:
+        web01:
+          ansible_host: 192.168.0.7
+      vars:
+        host_group: "{{ host_groups.WEB }}"
+        monitoring_mode: "{{ monitoring_modes.fullstack }}"
+
+    appServers:
+      hosts:
+        app01:
+          ansible_host: 192.168.0.8
+      vars:
+        host_group: "{{ host_groups.APP }}"
+        monitoring_mode: "{{ monitoring_modes.fullstack }}"

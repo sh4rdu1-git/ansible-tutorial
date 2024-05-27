@@ -1,0 +1,21 @@
+---
+- name: Install Dynatrace OneAgent on hosts listed in the inventory
+  hosts: all
+  become: true
+  tasks:
+    - name: Copy installer file for RHEL or Debian Linux OS to the remote hosts
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian']
+      copy:
+        src: ~/dynatrace-installer/Dynatrace-OneAgent-Installer-Linux.sh
+        dest: /opt/Dynatrace-Installer-Linux.sh
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install the OneAgent on the remote host
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian']
+      command:
+        argv:
+          - /opt/Dynatrace-Installer-Linux.sh
+          - --set-monitoring-mode={{ monitoring_mode }}
+          - --set-host-group={{ host_group }}
