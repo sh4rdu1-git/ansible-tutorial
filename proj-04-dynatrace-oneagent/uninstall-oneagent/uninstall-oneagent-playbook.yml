@@ -1,0 +1,39 @@
+---
+- name: Uninstall Dynatrace OneAgent and remove related files from the hosts listed in the inventory
+  hosts: all
+  become: true
+  tasks:
+    - name: Run uninstall script from installed OneAgent directory
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian']
+      command:
+        argv:
+          - /opt/dynatrace/oneagent/agent/uninstall.sh
+      register: uninstall_result
+      ignore_errors: yes
+
+    - name: Check if uninstallation was successful
+      debug:
+        msg: "Uninstallation script returned: {{ uninstall_result.rc }}"
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian']
+
+    - name: Fail the play if the uninstall script failed
+      fail:
+        msg: "Uninstall script failed, stopping the play."
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian'] and uninstall_result.rc != 0
+
+    - block:
+        - name: Remove dynatrace directory from /opt
+          file:
+            state: absent
+            path: /opt/dynatrace
+
+        - name: Remove dynatrace logs from /var/log
+          file:
+            state: absent
+            path: /var/log/dynatrace
+
+        - name: Remove dynatrace files from /var/lib
+          file:
+            state: absent
+            path: /var/lib/dynatrace
+      when: ansible_facts['os_family'] in ['RedHat', 'Debian'] and uninstall_result.rc == 0
