@@ -1,0 +1,6 @@
+---
+- name: To ingest os version number in Dynatace
+  hosts: all
+  tasks:
+    - name: Transfer and run the ingest script on remote servers
+      script: ./ingest.sh
